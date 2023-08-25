@@ -1,11 +1,11 @@
 from marshmallow import Schema, fields
 
+from model.basemodel import BaseModelId
 from setup_db import db
 
 
-class Movie(db.Model):
+class Movie(BaseModelId, db.Model):
     __tablename__ = 'movie'
-    id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255))
     description = db.Column(db.String(255))
     trailer = db.Column(db.String(255))
@@ -18,8 +18,8 @@ class Movie(db.Model):
 
 
 class MovieSchema(Schema):
-    id = fields.Int()
-    title = fields.Str()
+    id = fields.Int(required=True)
+    title = fields.Str(required=True)
     description = fields.Str()
     trailer = fields.Str()
     year = fields.Int()

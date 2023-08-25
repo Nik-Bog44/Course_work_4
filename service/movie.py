@@ -1,30 +1,31 @@
+from flask import current_app
+
 from dao.movie import MovieDAO
+from model.movie import MovieSchema
 
 
 class MovieService:
     def __init__(self, dao: MovieDAO):
         self.dao = dao
 
-    def get_one(self, bid):
-        return self.dao.get_one(bid)
+    def get_by_id(self, bid):
+        movie = self.dao.get_by_id(bid)
+        return MovieSchema().dump(movie)
 
-    def get_all(self, filters):
-        if filters.get("director_id") is not None:
-            movies = self.dao.get_by_director_id(filters.get("director_id"))
-        elif filters.get("genre_id") is not None:
-            movies = self.dao.get_by_genre_id(filters.get("genre_id"))
-        elif filters.get("year") is not None:
-            movies = self.dao.get_by_year(filters.get("year"))
-        else:
-            movies = self.dao.get_all()
-        return movies
+    def get_all_movies(self,data):
+        movies_query = self.dao.get_movies()
 
-    def create(self, movie_d):
-        return self.dao.create(movie_d)
+        status = data.get('status')
+        page = data.get('page')
 
-    def update(self, movie_d):
-        self.dao.update(movie_d)
-        return self.dao
+        if status and status == 'new':
+            movies_query = self.dao.get_new(movies_query)
 
-    def delete(self, rid):
-        self.dao.delete(rid)
+        elif page:
+            limit = current_app.config['ITEMS_PER_PAGE']
+            offset = (page - 1) * limit
+            movies_query = self.dao.get_pages(movies_query, limit, offset)
+
+        movies = self.dao.get_all(movies_query)
+
+        return MovieSchema(many=True).dump(movies)

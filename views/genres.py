@@ -1,7 +1,7 @@
 from flask import request
 from flask_restx import Resource, Namespace
 
-from dao.model.genre import GenreSchema
+from model.genre import GenreSchema
 from implemented import genre_service
 from utils import auth_required, admin_required
 
@@ -12,8 +12,8 @@ genre_ns = Namespace('genres')
 class GenresView(Resource):
     @auth_required
     def get(self):
-        rs = genre_service.get_all()
-        res = GenreSchema(many=True).dump(rs)
+        genre = genre_service.get_all()
+        res = GenreSchema(many=True).dump(genre)
         return res, 200
 
     def post(self):
@@ -25,7 +25,7 @@ class GenresView(Resource):
 class GenreView(Resource):
     @admin_required
     def get(self, rid):
-        r = genre_service.get_one(rid)
+        r = genre_service.get_item_by_id(rid)
         sm_d = GenreSchema().dump(r)
         return sm_d, 200
 

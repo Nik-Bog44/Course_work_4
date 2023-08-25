@@ -1,4 +1,5 @@
-from dao.model.user import User
+from model.user import User
+
 
 
 class UserDAO:
@@ -29,6 +30,6 @@ class UserDAO:
         self.session.add(user )
         self.session.commit()
 
-    def get_user_by_username(self, username, password):
-        user = self.session.query(User).filter(User.username == username).one_or_none()
+    def get_user_by_email(self, email: str):
+        user = self.session.query(User).filter(User.email == email).one_or_none()
         return user

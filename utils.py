@@ -1,9 +1,10 @@
-
+import hashlib
 
 import jwt
 from flask import request
 
-from constants import PWD_HASH_SALT
+from constants import PWD_HASH_SALT, PWD_HASH_ITERATIONS
+
 
 def auth_required(fun):
     def wrapper(*args, **kwargs):
@@ -16,7 +17,8 @@ def auth_required(fun):
         except Exception as e:
             return ('JWT Decode error'), 401
         return fun(*args, **kwargs)
-    return wrapper()
+
+    return wrapper
 
 
 def admin_required(fun):
@@ -34,4 +36,14 @@ def admin_required(fun):
         if role != 'admin':
             return "", 403
         return fun(*args, **kwargs)
-    return wrapper()
+
+    return wrapper
+
+
+def get_hash(password):
+        return hashlib.pbkdf2_hmac(
+            'sha256',
+            password.encode('utf-8'),
+            PWD_HASH_SALT,
+            PWD_HASH_ITERATIONS
+        ).decode("utf-8", "ignore")

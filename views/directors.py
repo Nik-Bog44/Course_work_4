@@ -1,7 +1,7 @@
 from flask import request
 from flask_restx import Resource, Namespace
 
-from dao.model.director import DirectorSchema
+from model.director import DirectorSchema
 from implemented import director_service
 from utils import auth_required, admin_required
 
@@ -21,8 +21,8 @@ class DirectorsView(Resource):
 class DirectorView(Resource):
     @admin_required
     def get(self, rid):
-        r = director_service.get_one(rid)
-        sm_d = DirectorSchema().dump(r)
+        director = director_service.get_item_by_id(rid)
+        sm_d = DirectorSchema().dump(director)
         return sm_d, 200
 
     def put(self, rid):

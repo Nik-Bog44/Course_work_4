@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_restx import Api
+from flask_cors import CORS
 
 from config import Config
 from setup_db import db
@@ -12,6 +13,7 @@ from views.auth import auth_ns
 
 def create_app(config_object):
     app = Flask(__name__)
+    CORS(app)
     app.config.from_object(config_object)
     register_extensions(app)
     return app
@@ -20,6 +22,7 @@ def create_app(config_object):
 def register_extensions(app):
     db.init_app(app)
     with app.app_context():
+
         db.create_all()
     api = Api(app)
     api.add_namespace(director_ns)
