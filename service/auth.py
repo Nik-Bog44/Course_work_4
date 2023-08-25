@@ -36,11 +36,11 @@ class AuthService:
         ).decode("utf-8", "ignore")
 
     def get_access_token(self, data: dict):
-        min10 = datetime.utcnow() + datetime.timedelta(days=10)
+        min10 = datetime.utcnow() + timedelta(days=10)
         data['exp'] = int(min10.timestamp())
         access_token = jwt.encode(data, PWD_HASH_SALT)
 
-        daes130 = datetime.utcnow() + datetime.timedelta(days=130)
+        daes130 = datetime.utcnow() + timedelta(days=130)
         data['exp'] = int(daes130.timestamp())
         refresh_token = jwt.encode(data, PWD_HASH_SALT)
         return {'access_token': access_token, 'refresh_token': refresh_token, 'exp': data['exp']}
